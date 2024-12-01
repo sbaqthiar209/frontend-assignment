@@ -1,5 +1,11 @@
 .styledTable {
-  /* Modern Table Styles */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    .tableWrapper {
+        min-height: 330px;
+    }
   table {
     width: 100%;
     border-collapse: collapse;
@@ -36,12 +42,21 @@
     background-color: #fafafa;
   }
 
-  /* Optional: Add border for better contrast */
   td {
     border-right: 1px solid #eee;
   }
 
   tr:last-child td {
     border-bottom: none;
+  }
+  .pagination-container{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap:1rem;
+    select {
+        height: 40px;
+        width: 50px;
+    }
   }
 }
