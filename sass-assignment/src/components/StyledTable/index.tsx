@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import dummyData from "../../../frontend-assignment.json";
+import React from "react";
 import "./styledTable.css";
 export interface ColumnModel {
   accessor: string;
@@ -16,22 +15,22 @@ interface StyledTablePropsType {
 
 const StyledTable = (props: StyledTablePropsType) => {
   const { rows, columns } = props;
-  // const [rowsDisplayed,setRowsDisplayed]= React.useState<RowModel[]>(rows);
-  // const [colsDisplayed,setColsDisplayed]= React.useState<ColumnModel[]>(columns);
   const StyledRow = (props: { keyVal: number; newRow: RowModel }) => {
     return (
-      <tr key={props.keyVal}>
+      <tr key={props.keyVal} data-testid="tableRowTestId">
         {Array.isArray(columns) &&
           columns.length > 0 &&
           columns.map((item, key) => {
             return (
-              <Cell
-                isHeading={false}
-                newCol={{
-                  accessor: item.accessor,
-                  text: props.newRow[item.accessor]?.toString() ?? "",
-                }}
-              />
+              <React.Fragment key={key}>
+                <Cell
+                  isHeading={false}
+                  newCol={{
+                    accessor: item.accessor,
+                    text: props.newRow[item.accessor]?.toString() ?? "",
+                  }}
+                />
+              </React.Fragment>
             );
           })}
       </tr>
@@ -49,12 +48,11 @@ const StyledTable = (props: StyledTablePropsType) => {
     );
   };
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  const [pageSize,setPageSize]= React.useState<number>(5);
-  const pagination = currentPage * pageSize, roundedSize= Math.round(rows.length / pageSize);
+  const [pageSize, setPageSize] = React.useState<number>(5);
+  const pagination = currentPage * pageSize,
+    roundedSize = Math.round(rows.length / pageSize);
   const totalPages =
-    rows.length % pageSize === 0
-      ? roundedSize
-      : roundedSize + 1;
+    rows.length % pageSize === 0 ? roundedSize : roundedSize + 1;
   const handleNextClick = () => {
     setCurrentPage((prev) => prev + 1);
   };
@@ -64,40 +62,51 @@ const StyledTable = (props: StyledTablePropsType) => {
   };
   return (
     <div className={"styledTable"}>
-        <div className="tableWrapper">
-      <table>
-        <thead>
-          {Array.isArray(columns) &&
-            columns.length > 0 &&
-            columns.map((item, key) => {
-              return (
-                <Cell
-                  newCol={{
-                    accessor: item.accessor,
-                    text: item.text,
-                  }}
-                  isHeading={true}
-                />
-              );
-            })}
-        </thead>
-        <tbody>
-          {Array.isArray(rows) &&
-            rows.length > 0 &&
-            rows.slice(pagination - pageSize, pagination).map((item, key) => {
-              return <StyledRow keyVal={key} newRow={item} />;
-            })}
-        </tbody>
-      </table>
-
-        </div>
+      <div className="tableWrapper">
+        <table>
+          <thead>
+            <tr>
+              {Array.isArray(columns) &&
+                columns.length > 0 &&
+                columns.map((item, key) => {
+                  return (
+                    <React.Fragment key={key}>
+                      <Cell
+                        newCol={{
+                          accessor: item.accessor,
+                          text: item.text,
+                        }}
+                        isHeading={true}
+                      />
+                    </React.Fragment>
+                  );
+                })}
+            </tr>
+          </thead>
+          <tbody>
+            {Array.isArray(rows) &&
+              rows.length > 0 &&
+              rows.slice(pagination - pageSize, pagination).map((item, key) => {
+                return (
+                  <React.Fragment key={key}>
+                    <StyledRow keyVal={key} newRow={item} />
+                  </React.Fragment>
+                );
+              })}
+          </tbody>
+        </table>
+      </div>
       {/* <tfoot> */}
       <div className="pagination-container">
-        <select onChange={(e)=>e.target.value && setPageSize(Number(e.target.value))}>
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
+        <select
+          onChange={(e) =>
+            e.target.value && setPageSize(Number(e.target.value))
+          }
+        >
+          <option value={5}>5</option>
+          <option value={10}>10</option>
+          <option value={20}>20</option>
+          <option value={50}>50</option>
         </select>
         <button onClick={handlePrevClick} disabled={currentPage === 1}>
           Prev
